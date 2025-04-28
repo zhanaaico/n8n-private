@@ -75,9 +75,6 @@
     "zx": "^8.1.4"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "sqlite3"
-    ],
     "overrides": {
       "@types/node": "^18.16.16",
       "chokidar": "^4.0.1",

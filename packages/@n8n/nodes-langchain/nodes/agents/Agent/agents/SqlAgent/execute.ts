@@ -17,7 +17,6 @@ import { getTracingConfig } from '@utils/tracing';
 
 import { getMysqlDataSource } from './other/handlers/mysql';
 import { getPostgresDataSource } from './other/handlers/postgres';
-import { getSqliteDataSource } from './other/handlers/sqlite';
 import { SQL_PREFIX, SQL_SUFFIX } from './other/prompts';
 
 const parseTablesString = (tablesString: string) =>
@@ -59,27 +58,15 @@ export async function sqlAgentAgentExecute(
 			}
 
 			const options = this.getNodeParameter('options', i, {});
-			const selectedDataSource = this.getNodeParameter('dataSource', i, 'sqlite') as
+			const selectedDataSource = this.getNodeParameter('dataSource', i, 'postgres') as
 				| 'mysql'
-				| 'postgres'
-				| 'sqlite';
+				| 'postgres';
 
 			const includedSampleRows = options.includedSampleRows as number;
 			const includedTablesArray = parseTablesString((options.includedTables as string) ?? '');
 			const ignoredTablesArray = parseTablesString((options.ignoredTables as string) ?? '');
 
 			let dataSource: DataSource | null = null;
-			if (selectedDataSource === 'sqlite') {
-				if (!item.binary) {
-					throw new NodeOperationError(
-						this.getNode(),
-						'No binary data found, please connect a binary to the input if you want to use SQLite as data source',
-					);
-				}
-
-				const binaryPropertyName = this.getNodeParameter('binaryPropertyName', i, 'data');
-				dataSource = await getSqliteDataSource.call(this, item.binary, binaryPropertyName);
-			}
 
 			if (selectedDataSource === 'postgres') {
 				dataSource = await getPostgresDataSource.call(this);
